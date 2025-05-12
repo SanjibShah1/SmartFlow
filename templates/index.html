@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vehicle Tracking</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Vehicle Tracking System</h1>
+        
+        <div class="video-container">
+            <img src="{{ url_for('video_feed') }}" class="video-feed">
+        </div>
+
+        <form method="post" action="/start" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>Input Source:</label>
+                <select name="source_type" onchange="toggleSource()">
+                    <option value="webcam">Webcam</option>
+                    <option value="file">Video File</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="webcam-settings">
+                <label>Webcam Index:</label>
+                <select name="webcam_index">
+                    <option value="0">Camera 0</option>
+                    <option value="1">Camera 1</option>
+                    <option value="2">Camera 2</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="file-upload" style="display: none;">
+                <label>Upload Video:</label>
+                <input type="file" name="video_file" accept="video/*">
+            </div>
+
+            <div class="form-group">
+                <label>Vehicle Classes:</label>
+                <label><input type="checkbox" name="classes" value="0" checked> Two Wheeler</label>
+                <label><input type="checkbox" name="classes" value="1" checked> Four Wheeler</label>
+            </div>
+
+            <div class="form-group">
+                <label>Confidence Threshold (0-1):</label>
+                <input type="number" name="confidence" step="0.1" value="0.5" min="0" max="1">
+            </div>
+
+            <div class="form-group">
+                <label>IOU Threshold (0-1):</label>
+                <input type="number" name="iou" step="0.1" value="0.7" min="0" max="1">
+            </div>
+
+            <button type="submit">Start Tracking</button>
+            <a href="/stop"><button type="button">Stop Tracking</button></a>
+        </form>
+
+        <div id="status-message">
+            {% if processing %}
+            <p class="status-active">Tracking is active</p>
+            {% else %}
+            <p class="status-inactive">Tracking is stopped</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function toggleSource() {
+            const sourceType = document.querySelector('[name="source_type"]').value;
+            document.getElementById('webcam-settings').style.display = 
+                sourceType === 'webcam' ? 'block' : 'none';
+            document.getElementById('file-upload').style.display = 
+                sourceType === 'file' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>
